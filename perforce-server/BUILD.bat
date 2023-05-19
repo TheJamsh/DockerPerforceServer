@@ -1,0 +1,1 @@
+start cmd /k docker build ./ --tag perforceserver:p4server

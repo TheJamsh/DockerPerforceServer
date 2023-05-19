@@ -1,0 +1,1 @@
+start cmd /k docker image prune -a
