@@ -11,7 +11,7 @@ ARG P4_DISTRO=focal
 FROM ubuntu:${P4_DISTRO}
 
 # Set Labels - disabled for now
-# LABEL maintainer="jamesbaxterse@live.co.uk"
+# LABEL maintainer="xxx"
 
 # Update Ubuntu System
 RUN apt-get update
