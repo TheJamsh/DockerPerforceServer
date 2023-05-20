@@ -2,6 +2,7 @@
 # https://github.com/ambakshi/docker-perforce
 # https://github.com/hawkmoth-studio/perforce-docker
 # https://aricodes.net/posts/perforce-server-with-docker/
+# https://www.froyok.fr/blog/2018-09-setting-up-perforce-with-docker-for-unreal-engine-4/#modifying_the_docker_image
 
 #default version
 ARG P4_VERSION=21.2
@@ -11,9 +12,6 @@ FROM ubuntu:${P4_DISTRO}
 
 # Set Labels - disabled for now
 # LABEL maintainer="jamesbaxterse@live.co.uk"
-
-# Sets the environnent to docker, presumably?
-# ENV container docker
 
 # Update Ubuntu System
 RUN apt-get update
@@ -53,13 +51,20 @@ RUN apt-get clean all
 EXPOSE 1666
 
 # Setup ENV Variables for following scripts..
-ENV NAME p4depot
-ENV P4PORT ssl:1666
-ENV P4USER p4admin
-ENV P4PASSWD p4pass123456abc
-ENV P4ROOT /data/root
-ENV P4SSLDIR ${P4ROOT}/ssl
+ENV DATADIR		/data
+ENV P4SVCNAME	PerforceService
+ENV P4PORT		ssl:1666
+ENV P4USER		JBaxter
+ENV P4PASSWD	defaultPassword123
+ENV P4ROOT		${DATADIR}/${P4SVCNAME}
+ENV P4SSLDIR	${P4ROOT}/ssl
 
-COPY ./setup-perforce.sh  /
+# Setup data volume
+VOLUME ["$DATADIR"]
 
+# Copy instead of ADD as ADD prevents files being visible.
+COPY ./docker-startup.d/	/docker-startup.d/
+COPY ./setup-perforce.sh	/
+
+# Entrypoint instead of CMD seems to preserve ENV variables..
 ENTRYPOINT ["/setup-perforce.sh"]

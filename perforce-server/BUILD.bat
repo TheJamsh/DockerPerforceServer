@@ -1,1 +1,1 @@
-start cmd /k docker build ./ --tag perforceserver:p4server
+start cmd /k docker build ./ --tag jambax:perforce

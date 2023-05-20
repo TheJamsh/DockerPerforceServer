@@ -1,16 +1,32 @@
 #!/bin/bash
 set -e
 
-mkdir -p ${P4ROOT}
-chown -R perforce:perforce ${P4ROOT}
+# Set global vars
+export P4D_CASE_SENSITIVE="${P4D_CASE_SENSITIVE:-true}"
+export P4D_SECURITY="${P4D_SECURITY:-2}"
+export P4D_NO_DEFAULT_DEPOT="${P4D_NODEPOT:-true}"
 
-/opt/perforce/sbin/configure-helix-p4d.sh ${NAME} -n -p ${P4PORT} -r ${P4ROOT} -u ${P4USER} -P ${P4PASSWD}
+# link p4dctl service configuration file into /etc/perforce/
+CONFDIR="${DATADIR}/config"
 
-#CONFIGURE_P4D_CMD=("/opt/perforce/sbin/configure-helix-p4d.sh")
-#CONFIGURE_P4D_CMD+=("-h")
+if [[ ! -d "${CONFDIR}"/etc ]]; then
+	echo "Initializing configuration files in /etc/perforce/"
+	mkdir -p "${CONFDIR}"/etc
+	cp -rf /etc/perforce/* "${CONFDIR}"/etc
+	export FRESHINSTALL=1
+fi
 
-#"$CONFIGURE_P4D_CMD"
+# setup hard link in docker volume directory to default perforce config location
+mv /etc/perforce /etc/perforce.orig
+ln -s "${CONFDIR}"/etc /etc/perforce
 
-#sleep 2
+# Run all subscripts (in subshell to prevent environment variable changes)
+(
+	for f in /docker-startup.d/*.sh; do
+		bash "${f}" || exit 1
+	done
+)
 
-#exec /usr/bin/tail --pid=$(cat /var/run/p4d.$NAME.pid) -F "$DATAVOLUME/$NAME/logs/log"
+sleep 2
+
+exec /usr/bin/tail --pid=$(cat /var/run/p4d.$P4SVCNAME.pid) -F "${DATADIR}/${P4SVCNAME}/logs/log"
