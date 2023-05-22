@@ -4,7 +4,7 @@ services:
         container_name: perforce-server
         build: .
         volumes:
-            - data:/mnt/user
+            - /mnt/user:/data
         ports:
             - '1666:1666'
         environment:

@@ -48,18 +48,18 @@ RUN apt-get clean all
 EXPOSE 1666
 
 # Set default variables
-ENV DATA_PATH				/data
+ENV DATAVOLUME				/data
 ENV P4SVCNAME				PerforceService
 ENV P4PORT					ssl:1666
 ENV P4USER					JBaxter
 ENV P4PASSWD				defaultPassword123
-ENV P4ROOT					"${DATA_PATH}/${P4SVCNAME}"
-ENV P4SSLDIR				"${P4ROOT}/ssl"
+ENV P4ROOT					${DATAVOLUME}/${P4SVCNAME}
+ENV P4SSLDIR				${P4ROOT}/ssl
 ENV P4_NO_DEFAULT_DEPOT		false
 ENV P4D_SECURITY			2
 
 # Seems to creates a volume?
-VOLUME ["${DATA_PATH}"]
+VOLUME ["${DATAVOLUME}"]
 
 # Copy instead of ADD as ADD prevents files being visible.
 # Documentation also suggests using COPY when you don't need the "magic" of ADD
