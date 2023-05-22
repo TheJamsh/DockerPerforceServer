@@ -10,9 +10,6 @@ ARG P4_DISTRO=focal
 
 FROM ubuntu:${P4_DISTRO}
 
-# Set Labels - disabled for now
-# LABEL maintainer="jamesbaxterse@live.co.uk"
-
 # Update Ubuntu System
 RUN apt-get update
 RUN apt-get upgrade -y
@@ -47,22 +44,25 @@ RUN apt-get install -y helix-p4d=20${P4_VERSION}-*
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get clean all
 
-# Expose the Port
+# Expose the port
 EXPOSE 1666
 
-# Setup ENV Variables for following scripts..
-ENV DATADIR		/data
-ENV P4SVCNAME	PerforceService
-ENV P4PORT		ssl:1666
-ENV P4USER		JBaxter
-ENV P4PASSWD	defaultPassword123
-ENV P4ROOT		${DATADIR}/${P4SVCNAME}
-ENV P4SSLDIR	${P4ROOT}/ssl
+# Set default variables
+ENV DATA_PATH				/data
+ENV P4SVCNAME				PerforceService
+ENV P4PORT					ssl:1666
+ENV P4USER					JBaxter
+ENV P4PASSWD				defaultPassword123
+ENV P4ROOT					"${DATA_PATH}/${P4SVCNAME}"
+ENV P4SSLDIR				"${P4ROOT}/ssl"
+ENV P4_NO_DEFAULT_DEPOT		false
+ENV P4D_SECURITY			2
 
-# Setup data volume
-VOLUME ["$DATADIR"]
+# Seems to creates a volume?
+VOLUME ["${DATA_PATH}"]
 
 # Copy instead of ADD as ADD prevents files being visible.
+# Documentation also suggests using COPY when you don't need the "magic" of ADD
 COPY ./docker-startup.d/	/docker-startup.d/
 COPY ./setup-perforce.sh	/
 
