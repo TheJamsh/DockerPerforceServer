@@ -1,1 +1,1 @@
-start cmd /k docker build ./ --tag jambax:perforce
+start cmd /k docker build ./ --tag helix-server --no-cache

@@ -1,0 +1,1 @@
+start cmd /k docker run jambax:perforce -v /mnt/user:/data -p 127.0.0.1:1666:1666/tcp

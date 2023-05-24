@@ -5,16 +5,3 @@ services:
         build: .
         volumes:
             - /mnt/user:/data
-        ports:
-            - '1666:1666'
-        environment:
-            - P4SVCNAME=PerforceService
-            - P4PORT=ssl:1666
-            - P4USER=JBaxter
-            - P4PASSWD=defaultPassword123
-            - P4_NO_DEFAULT_DEPOT=true
-            - P4D_SECURITY=2
-            
-volumes:
-    data:
-        external: true

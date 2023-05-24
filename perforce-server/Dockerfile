@@ -5,7 +5,7 @@
 # https://www.froyok.fr/blog/2018-09-setting-up-perforce-with-docker-for-unreal-engine-4/#modifying_the_docker_image
 
 #default version
-ARG P4_VERSION=21.2
+ARG P4_VERSION=23.1
 ARG P4_DISTRO=focal
 
 FROM ubuntu:${P4_DISTRO}
@@ -54,7 +54,7 @@ ENV P4PORT					ssl:1666
 ENV P4USER					JBaxter
 ENV P4PASSWD				defaultPassword123
 ENV P4ROOT					${DATAVOLUME}/${P4SVCNAME}
-ENV P4SSLDIR				${P4ROOT}/ssl
+ENV P4SSLDIR				${P4ROOT}/root/ssl
 ENV P4_NO_DEFAULT_DEPOT		false
 ENV P4D_SECURITY			2
 

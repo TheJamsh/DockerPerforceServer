@@ -65,9 +65,33 @@ if [ "${FRESHINSTALL}" = "1" ]; then
 	echo >&2 "First time installation.. setting security configuration"
 	
 	p4 configure set security="${P4D_SECURITY}" 1>/dev/null		# Security Level
-	p4 configure set lbr.proxy.case=1							# disable automatic user account creation
 	p4 configure set run.users.authorize=1						# disable unauthorised viewing of user list
 	p4 configure set dm.keys.hide=2								# disable unauthorised viewing of config settings
+	p4 configure set dm.user.noautocreate=2						# disable automatic user account creation
+	
+	# Update the Typemap
+    # Based on : https://docs.unrealengine.com/en-us/Engine/Basics/SourceControl/Perforce
+    (p4 typemap -o; echo " binary+w //depot/....exe") | p4 typemap -i
+    (p4 typemap -o; echo " binary+w //depot/....dll") | p4 typemap -i
+    (p4 typemap -o; echo " binary+w //depot/....lib") | p4 typemap -i
+    (p4 typemap -o; echo " binary+w //depot/....app") | p4 typemap -i
+    (p4 typemap -o; echo " binary+w //depot/....dylib") | p4 typemap -i
+    (p4 typemap -o; echo " binary+w //depot/....stub") | p4 typemap -i
+    (p4 typemap -o; echo " binary+w //depot/....ipa") | p4 typemap -i
+    (p4 typemap -o; echo " binary //depot/....bmp") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....ini") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....config") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....cpp") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....h") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....c") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....cs") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....m") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....mm") | p4 typemap -i
+    (p4 typemap -o; echo " text //depot/....py") | p4 typemap -i
+    (p4 typemap -o; echo " binary+l //depot/....uasset") | p4 typemap -i
+    (p4 typemap -o; echo " binary+l //depot/....umap") | p4 typemap -i
+    (p4 typemap -o; echo " binary+l //depot/....upk") | p4 typemap -i
+    (p4 typemap -o; echo " binary+l //depot/....udk") | p4 typemap -i
 fi
 
 # Output Properties
