@@ -2,12 +2,18 @@
 set -e
 
 # If already configured, nothing to do but start the service
-if p4dctl list 2>/dev/null | grep -q "${P4SVCNAME}"; then
+if gosu perforce p4dctl list 2>/dev/null | grep -q "${P4SVCNAME}"; then
 
-	echo "Starting existing service '${P4SVCNAME}'"
+	# We don't do this, service is already running
+	echo "Starting existing service '${P4SVCNAME}' in local-only mode"
+	gosu perforce p4dctl start "${P4SVCNAME}" &>/dev/null
 	
-	# Start the Service #TODO if not already started
-	p4dctl start -t p4d "${P4SVCNAME}"
+	# login to server
+	echo "logging into existing P4 Server"
+	echo "${P4PASSWD}" | p4 login 1>dev/null
+	
+	# Print info
+	p4 info
 	
 	exit 0
 fi

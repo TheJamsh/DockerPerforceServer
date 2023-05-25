@@ -24,10 +24,17 @@ ln -s "${DATAVOLUME}"/config/etc /etc/perforce
 	done
 )
 
-# Not sure...
-sleep 2
+# Brief pause
+sleep 1
 
-p4 info
+echo "Stopping Server prior to docker startup..."
+gosu perforce p4dctl stop "${P4SVCNAME}" &>dev/null
+
+# Return to next dockerfile command
+exec "$@"
+
+# p4 info
 
 # Tail the log and output it
-exec /usr/bin/tail --pid=$(cat /var/run/p4d.$P4SVCNAME.pid) -F "${DATAVOLUME}/${P4SVCNAME}/logs/log"
+# Note, this only works on the FIRST run of the container, for some reason
+# exec /usr/bin/tail --pid=$(cat /var/run/p4d.$P4SVCNAME.pid) -F "${DATAVOLUME}/${P4SVCNAME}/logs/log"

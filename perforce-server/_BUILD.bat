@@ -1,1 +1,1 @@
-start cmd /k docker build ./ --tag helix-server --no-cache
+start cmd /k docker build ./ --tag helix-server:latest

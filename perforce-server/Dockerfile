@@ -18,6 +18,7 @@ RUN apt-get upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 		wget \
 		gnupg \
+		gosu \
 		software-properties-common
 		
 # Cleanup
@@ -34,7 +35,7 @@ RUN apt-add-repository -y "deb https://package.perforce.com/apt/ubuntu ${P4_DIST
 RUN apt-get update
 
 # Output available versions to console (debugging)
-RUN apt-cache policy helix-p4d
+# RUN apt-cache policy helix-p4d
 
 # Install the specified version - MUST install Helix-p4d-base first to avoid dependency issues when installing a custom version
 RUN apt-get install -y helix-p4d-base=20${P4_VERSION}-*
@@ -49,13 +50,13 @@ EXPOSE 1666
 
 # Set default variables
 ENV DATAVOLUME				/data
-ENV P4SVCNAME				PerforceService
+ENV P4SVCNAME				PerforceMaster
 ENV P4PORT					ssl:1666
 ENV P4USER					JBaxter
 ENV P4PASSWD				defaultPassword123
 ENV P4ROOT					${DATAVOLUME}/${P4SVCNAME}
 ENV P4SSLDIR				${P4ROOT}/root/ssl
-ENV P4_NO_DEFAULT_DEPOT		false
+ENV P4_NO_DEFAULT_DEPOT		true
 ENV P4D_SECURITY			2
 
 # Seems to creates a volume?
@@ -68,3 +69,6 @@ COPY ./setup-perforce.sh	/
 
 # Entrypoint instead of CMD seems to preserve ENV variables..
 ENTRYPOINT ["/setup-perforce.sh"]
+
+# Run perforce. Use p4d to run, as using p4dctl will exit instantly
+CMD gosu perforce p4d -r "${P4ROOT}"/root -p "${P4PORT}"
