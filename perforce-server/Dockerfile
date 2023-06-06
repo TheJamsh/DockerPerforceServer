@@ -30,7 +30,8 @@ ARG P4_VERSION
 ARG P4_DISTRO
 
 # Add Perforce package and update it
-RUN wget -qO - https://package.perforce.com/perforce.pubkey | gpg --dearmor | tee /etc/apt/trusted.gpg.d/perforce.gpg
+# Tee spits garbage to terminal. Stop it doing that
+RUN wget -qO - https://package.perforce.com/perforce.pubkey | gpg --dearmor | tee /etc/apt/trusted.gpg.d/perforce.gpg >/dev/null
 RUN apt-add-repository -y "deb https://package.perforce.com/apt/ubuntu ${P4_DISTRO} release"
 RUN apt-get update
 
@@ -50,7 +51,7 @@ EXPOSE 1666
 
 # Set default variables
 ENV DATAVOLUME				/data
-ENV P4SVCNAME				PerforceMaster
+ENV P4SVCNAME				PerforceService
 ENV P4PORT					ssl:1666
 ENV P4USER					JBaxter
 ENV P4PASSWD				defaultPassword123
@@ -70,5 +71,8 @@ COPY ./setup-perforce.sh	/
 # Entrypoint instead of CMD seems to preserve ENV variables..
 ENTRYPOINT ["/setup-perforce.sh"]
 
-# Run perforce. Use p4d to run, as using p4dctl will exit instantly
+# Run perforce. Use p4d to run, as p4dctl doesn't log
 CMD gosu perforce p4d -r "${P4ROOT}"/root -p "${P4PORT}"
+
+# Sleep forever. Allows us to stop/start the perforce server at will without the container dying.
+CMD sleep infinity
